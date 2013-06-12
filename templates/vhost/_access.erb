@@ -1,0 +1,43 @@
+<% if @sections %>
+   ## Access control
+<% Array(@sections).each do |sect| -%>
+  <<%= sect['type'] %> <%= sect['path'] %>>
+<% if sect['override'] -%>
+    AllowOverride <%= Array(sect['override']).join(' ') %>
+<% else -%>
+    AllowOverride <%= Array(@override).join(' ') %>
+<% end -%>
+<% if sect['options'] -%>
+    Options <%= Array(sect['options']).join(' ') %>
+<% else -%>
+    Options <%= Array(@options).join(' ') %>
+<% end -%>
+<% if sect['auth'] -%>
+
+    AuthName "<%= sect['auth']['name'] %>"
+    AuthType <%= sect['auth']['type'] %>
+<% if sect['auth']['type'] == 'Basic' -%>
+    AuthBasicProvider <%= sect['auth']['provider'] %>
+<% end -%>
+<% if sect['auth']['type'] == 'Digest' -%>
+    AuthDigestDomain <%= sect['auth']['digestdomain'] %>
+    AuthDigestProvider <%= sect['auth']['provider'] %>
+<% end -%>
+<% if sect['auth']['userfile'] -%>
+    AuthUserFile <%= sect['auth']['userfile'] %>
+<% end -%>
+<% if sect['auth']['groupfile'] -%>
+    AuthGroupFile <%= sect['auth']['groupfile'] %>
+<% end -%>
+<% if sect['auth']['require'] -%>
+    Require <%= sect['auth']['require'] %>
+<% end -%>
+<% end -%>
+<% if sect['satisfy'] -%>
+
+    Satisfy <%= sect['satisfy'] %>
+<% end -%>
+  </<%= sect['type'] %>>
+
+<% end -%>
+<% end -%>

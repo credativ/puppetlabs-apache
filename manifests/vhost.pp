@@ -15,6 +15,7 @@
 # - The $priority of the site
 # - The $servername is the primary name of the virtual host
 # - The $serveraliases of the site
+# - The $sections for access control (array of Directory, Location, etc. sections)
 # - The $options for the given vhost
 # - The $override for the given vhost (array of AllowOverride arguments)
 # - The $vhost_name for name based virtualhosting, defaulting to *
@@ -77,6 +78,7 @@ define apache::vhost(
     $default_vhost      = false,
     $servername         = undef,
     $serveraliases      = [],
+    $sections           = undef,
     $options            = ['Indexes','FollowSymLinks','MultiViews'],
     $override           = ['None'],
     $vhost_name         = '*',
@@ -225,6 +227,12 @@ define apache::vhost(
   if ! $ip_based {
     if ! defined(Apache::Namevirtualhost[$nvh_addr_port]) {
       apache::namevirtualhost { $nvh_addr_port: }
+    }
+  }
+
+  if $sections and apache_has_auth_type($sections, 'Digest') {
+    if ! defined(Apache::Mod['auth_digest']) {
+      apache::mod { 'auth_digest': }
     }
   }
 

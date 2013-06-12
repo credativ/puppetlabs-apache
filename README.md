@@ -475,6 +475,42 @@ Creates URL rewrite rules. Defaults to 'undef'. This parameter allows you to spe
 
 Defines a directory of CGI scripts to be aliased to the path '/cgi-bin'
 
+#####`sections`
+
+Specifies an array of access control sections. A section is specified by a hash that must define the keys 'type' (Directory, Location, Files, etc.) and 'path'. It may define its own 'options' and 'override' values.
+Furthermore it may specify authentication and authorization options via the 'auth' key, whose value is another hash. Currently supported authentication types are 'Basic' and 'Digest', the currently only supperted authentication provider is 'file'.
+
+    apache::vhost { 'site.name.fdqn':
+      …
+      sections => [
+        {
+          'type'    => 'Directory',
+          'path'    => '/filesystempath',
+          'override' => 'AuthConfig',
+        },
+        {
+          'type'    => 'Location',
+          'path' => '/urlpath',
+          'options' => 'FollowSymLinks',
+          'auth' => { 'name' => 'Basic Authentication',
+                      'type' => 'Basic',
+                      'provider' => 'file',
+                      'userfile' => '/etc/apache2/auth/passwd',
+                      'reqire' => 'valid-user', },
+        },
+        {
+          'type'    => 'Files',
+          'path' => 'file.html',
+          'auth' => { 'name' => 'Digest Authentication',
+                      'type' => 'Digest',
+                      'provider' => 'file',
+                      'groupfile' => '/etc/apache2/auth/group',
+                      'reqire' => 'group users',
+                    },
+        },
+      ],
+    }
+
 #####`serveradmin`
 
 Specifies the email address Apache will display when it renders one of its error pages.
